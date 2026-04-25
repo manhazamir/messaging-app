@@ -10,22 +10,35 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "t", "yes", "y", "on"}
+
+def _env_csv(name: str, default: list[str] | None = None) -> list[str]:
+    raw = os.getenv(name)
+    if raw is None:
+        return default or []
+    return [part.strip() for part in raw.split(",") if part.strip()]
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-go940%u4of^br&^(co1c*h_$_1fz$4y7d5m8uic+*)qd5k*ibu'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = _env_csv("DJANGO_ALLOWED_HOSTS", [])
 
 
 # Application definition
@@ -100,7 +113,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS =  [
-    'http://localhost:3000',
+    *(_env_csv("DJANGO_CORS_ALLOWED_ORIGINS", ["http://localhost:3000"]))
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -122,11 +135,11 @@ CORS_ALLOW_HEADERS = [
 DATABASES = {
   'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'chatapp', 
-        'USER': 'postgres', 
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.getenv('POSTGRES_DB', 'chatapp'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', ''),
     }
 }
 

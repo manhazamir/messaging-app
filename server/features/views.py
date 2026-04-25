@@ -26,7 +26,7 @@ class CustomRegistration(generics.GenericAPIView):
         
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,  status= status.HTTP_200a_OK)
+            return Response(serializer.data,  status= status.HTTP_200_OK)
         else:
             print("Error", serializer.errors)
             return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
@@ -129,8 +129,8 @@ class ThreadView(generics.GenericAPIView):
 
         
         if qs.exists():
-            threads_json = serialize("json", qs)
-            JsonResponse({'result': {'Threads': threads_json}},  status= status.HTTP_200_OK)
+            existing = qs.first()
+            return Response(ThreadSerializer(existing).data, status=status.HTTP_200_OK)
         
         if serializer.is_valid():
             

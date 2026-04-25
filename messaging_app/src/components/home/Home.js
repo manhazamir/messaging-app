@@ -17,33 +17,29 @@ function Home() {
 
   const [broadcastMsg, setBroadcastMsg] = useState();
   useEffect(() => {
-    try {
-      const auth = localStorage.getItem("token");
-      console.log("auth token", auth);
-      const response = axios.get(
-        process.env.REACT_APP_SERVER_API +
-          "/messages/" +
-          localStorage.getItem("userID"),
+    const loadThreads = async () => {
+      try {
+        const auth = localStorage.getItem("token");
+        const userId = localStorage.getItem("userID");
+        if (!auth || !userId) return;
 
-        {
-          headers: {
-            Authorization: `Token ${auth}`,
-          },
-        }
-      );
-      if (response) {
-        console.log("thread rs", response);
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_API + "/messages/" + userId,
+          {
+            headers: {
+              Authorization: `Token ${auth}`,
+            },
+          }
+        );
+
         setThreads(response.data);
+      } catch (error) {
+        // keep UX simple here; slices already handle most errors
+        console.error(error);
       }
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.response && error.response.data) ||
-        error.message ||
-        error.toString();
+    };
 
-      return message;
-    }
+    loadThreads();
   }, []);
 
   const [selectedContact, setSelectedContact] = useState();
