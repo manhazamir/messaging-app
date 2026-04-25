@@ -1,16 +1,11 @@
 # MessagingApp (React + Django + WebSockets)
 
-A simple real-time messaging app:
+> Built in 2022 as a side-project in Django. Cleaned up and added a Readme later. 
 
 - React (Create React App) frontend
 - Django + Django REST Framework backend (token auth)
 - Django Channels WebSockets for realtime chat and broadcasts
 - Postgres as the database (configurable via environment variables)
-
-## Repo structure
-
-- `messaging_app/`: React UI
-- `server/`: Django backend (`features` app contains models, API views, websocket consumers)
 
 ## Features
 
@@ -92,8 +87,6 @@ Frontend will be at `http://localhost:3000`.
 
 ## Notes on configuration & security
 
-- **Do not commit `.env` files**. This repo includes `.env.example` files instead.
-- Django settings now read values from environment variables:
   - `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`
   - `DJANGO_CORS_ALLOWED_ORIGINS`
   - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`
